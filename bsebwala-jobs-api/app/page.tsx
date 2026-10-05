@@ -1,0 +1,1 @@
+export default function Page(){return <main style={{fontFamily:'Arial',maxWidth:900,margin:'60px auto',padding:24}}><h1>BSEBWALA Jobs API</h1><p>Government jobs and recruitment API for bsebwala.in.</p><p><a href="/api/health">API Health</a> · <a href="/api/jobs">Jobs</a> · <a href="/api/news">News</a> · <a href="/api/home">Homepage feed</a></p></main>}

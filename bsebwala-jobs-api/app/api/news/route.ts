@@ -1,0 +1,2 @@
+import { db } from '@/lib/db'; import { ok } from '@/lib/api';
+export async function GET(req:Request){const u=new URL(req.url),limit=Math.min(Number(u.searchParams.get('limit')||20),100),q=u.searchParams.get('q');const where:any=q?{OR:[{title:{contains:q,mode:'insensitive'}},{summary:{contains:q,mode:'insensitive'}},{category:{contains:q,mode:'insensitive'}}]}:{};const rows=await db.news.findMany({where,include:{source:true},orderBy:{publishedAt:'desc'},take:limit});return ok(rows,{count:rows.length});}

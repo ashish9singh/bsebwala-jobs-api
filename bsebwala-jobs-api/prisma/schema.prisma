@@ -1,0 +1,92 @@
+generator client { provider = "prisma-client-js" }
+
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+
+enum SourceType { OFFICIAL GOVERNMENT NEWS SECONDARY }
+enum JobStatus { UPCOMING APPLICATION_OPEN APPLICATION_CLOSING_SOON APPLICATION_CLOSED CORRECTION_OPEN ADMIT_CARD_AVAILABLE EXAM_SCHEDULED ANSWER_KEY_AVAILABLE RESULT_AVAILABLE MERIT_LIST_AVAILABLE DOCUMENT_VERIFICATION INTERVIEW CANCELLED COMPLETED }
+
+model Source {
+  id              String     @id @default(cuid())
+  name            String
+  organization    String?
+  state           String?
+  type            SourceType
+  priority        Int        @default(2)
+  url             String
+  enabled         Boolean    @default(true)
+  lastCheckedAt   DateTime?
+  createdAt       DateTime   @default(now())
+  jobs            Job[]
+  news            News[]
+}
+
+model Job {
+  id                       String     @id @default(cuid())
+  slug                     String     @unique
+  title                    String
+  organization             String
+  department               String?
+  advertisementNo          String?
+  notificationNo           String?
+  vacancies                Int?
+  posts                    String[]
+  qualifications           String[]
+  categories               String[]
+  state                    String?
+  eligibility              String?
+  ageLimit                 String?
+  ageRelaxation            String?
+  genderEligibility        String?
+  domicileRequirement      String?
+  salary                   String?
+  payLevel                 String?
+  applicationFee           String?
+  applicationStart        DateTime?
+  applicationEnd          DateTime?
+  correctionEnd            DateTime?
+  examDate                 DateTime?
+  admitCardDate            DateTime?
+  answerKeyDate            DateTime?
+  resultDate               DateTime?
+  selectionProcess         String?
+  physicalRequirements     String?
+  skillRequirements        String?
+  requiredDocuments        String?
+  officialNotificationUrl  String?
+  officialApplicationUrl   String?
+  sourceUrl                String
+  sourceId                 String
+  source                   Source     @relation(fields:[sourceId], references:[id])
+  status                   JobStatus   @default(UPCOMING)
+  verified                 Boolean     @default(false)
+  verifiedAgainst          String?
+  lastVerifiedAt           DateTime?
+  publishedAt              DateTime?
+  lastUpdatedAt            DateTime   @updatedAt
+  seoTitle                 String?
+  seoDescription           String?
+  keywords                 String[]
+  news                     News[]
+  createdAt                DateTime   @default(now())
+  @@index([status])
+  @@index([state])
+  @@index([organization])
+  @@index([applicationEnd])
+}
+
+model News {
+  id                      String    @id @default(cuid())
+  title                   String
+  summary                 String
+  category                String
+  publishedAt             DateTime
+  sourceUrl               String
+  sourceId                String
+  source                  Source    @relation(fields:[sourceId], references:[id])
+  officialNotificationUrl String?
+  verified                Boolean   @default(false)
+  relatedJobId            String?
+  relatedJob              Job?      @relation(fields:[relatedJobId], references:[id])
+  createdAt               DateTime  @default(now())
+  @@index([publishedAt])
+}
